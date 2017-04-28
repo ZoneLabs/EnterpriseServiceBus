@@ -1,0 +1,33 @@
+glassfish Initial Context
+    java.naming.factory.initial - com.sun.enterprise.naming.SerialInitContextFactory
+    java.naming.factory.url.pkgs - com.sun.enterprise.naming
+    java.naming.provider.url - iiop://localhost:3700
+
+JMS Resources
+
+    Connection Factories
+        # JNDI Name:gfConnectionFactory
+          Resource Type:javax.jms.ConnectionFactory
+
+    Destination Resources
+        # JNDI Name:ESBreplyQueue
+          Physical Destination Name:ESBreplyQueue
+          Resource Type:  javax.jms.Queue
+
+        # JNDI Name:ESBQueue
+          Physical Destination Name:ESBQueue
+          Resource Type:  javax.jms.Queue
+
+        # JNDI Name:service1que
+          Physical Destination Name:service1que
+          Resource Type:  javax.jms.Queue
+
+        # JNDI Name:service2que
+          Physical Destination Name:service2que
+          Resource Type:  javax.jms.Queue    
+
+        # JNDI Name:servicequeout
+          Physical Destination Name:servicequeout
+          Resource Type:  javax.jms.Queue    
+
+

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EnvConfig xmlns="http://www.bss.org/esb/xml">
+	<!-- URL of the file containing the ESBConfiguration XML document -->
+	<EsbConfigurationUrl>/home/heshan/NetBeansProjects/ESB/ESB/src/conf/EsbConfiguration.xml</EsbConfigurationUrl>
+	<!--  -->
+	<EsbQueueConnectionFactory>qcf-1</EsbQueueConnectionFactory>
+	<!-- JNDI name of the JMS queue where ESB receives the inbound messages. -->
+	<EsbInputQueue>esb-in-queue</EsbInputQueue>
+	<!-- JNDI name of the JMS queue where messages to be redelivered are sent by ESB. -->
+	<RedeliveryQueue>Redelivery.Queue</RedeliveryQueue>
+	<!-- Name of the route over which the messages resulting in errors are sent. -->
+	<ErrorRouteName>Error</ErrorRouteName>
+	<!-- Name of the route over which the messages to be redelivered are sent. -->
+	<RedeliveryRouteName>Redelivery</RedeliveryRouteName>
+	<!-- Name of the route over which the redelivery request messages are sent. -->
+	<RedeliveryRequestRouteName>RedeliveryRequest</RedeliveryRequestRouteName>
+	<!-- Name of the system deadletter route. -->
+	<DeadLetterRouteName>DeadLetter</DeadLetterRouteName>
+	<!-- Names of the JMS message properties that are used by ESB. Names of these
+	properties should be such that it excludes the possibility of a name collision 
+	with any already set property on the JMS message.-->
+	<MessagePeoprties>
+		<!-- This property must be set by the sender. It holds the name of 
+		the destination route as configured in the ESBConfiguration XML document. -->
+		<Destination>DestinationRoute</Destination>
+		<!-- This JMS property may be set by the ESB for handling the redelivery
+		of a message. -->
+		<RedeliveryTime>RedeliveryTime</RedeliveryTime>
+		<!-- This JMS property holds the number of retries attempted on the message.-->
+		<RedeliveryAttempts>RedeliveryTries</RedeliveryAttempts>
+		<!-- Holds the sender's principal. -->
+		<AuthPrincipal>AuthorizedPrincipal</AuthPrincipal>
+	</MessagePeoprties>
+</EnvConfig>

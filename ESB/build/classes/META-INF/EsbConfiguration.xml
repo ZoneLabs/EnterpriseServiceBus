@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EsbConfiguration>
+   <Route name="service1" retryPolicyRef="100-sec-retry" transformerRef="service1Transform">
+      <ServiceName name="String Matching" /> 
+      <TransportHandler beanName="service1Transport"/>
+      <DeadLetterDestination routeName="DeadLetter"/>
+      <AuthConstraint principals="app-1"/>
+   </Route>
+   <Route name="service2" retryPolicyRef="500-sec-retry" transformerRef="service2Transform">
+      <ServiceName name="Longest String" /> 
+      <TransportHandler beanName="service2Transport"/>
+      <DeadLetterDestination routeName="DeadLetter"/>
+      <AuthConstraint principals="app-2"/>
+   </Route>
+   <Route name="RedeliveryRequest" retryPolicyRef="500-sec-retry">
+      <TransportHandler beanName="redeliveryRequestJMSTransport"/>
+      <DeadLetterDestination routeName="DeadLetter"/>
+   </Route>
+   <Route name="DeadLetter" retryPolicyRef="500-sec-retry">
+      <TransportHandler beanName="deadLetterJMSTransport"/>
+   </Route>
+   <Route name="Redelivery" retryPolicyRef="500-sec-retry">
+      <TransportHandler beanName="redeliveryJMSTransport"/>
+      <DeadLetterDestination routeName="DeadLetter"/>
+   </Route>
+   <Route name="Error" retryPolicyRef="500-sec-retry">
+      <TransportHandler beanName="errorJMSTransport"/>
+   </Route>
+   
+   <Transformer name="service1Transform">
+         <Property name="line" type="java.lang.String"/>
+         <Property name="word" type="java.lang.String"/>
+   </Transformer>
+   <Transformer name="service2Transform">
+         <Property name="arg1" type="java.lang.String"/>
+         <Property name="arg2" type="java.lang.String"/>
+         <Property name="arg3" type="java.lang.String"/>
+   </Transformer>
+   
+   <Transport name="service1Transport">
+        <Queue queuein="service1que"/>
+   </Transport>    
+   <Transport name="service2Transport">
+        <Queue queuein="service2que"/>
+   </Transport>    
+   
+   
+   
+   <Beans>
+      <!-- Transport handlers for the service components. -->
+      <Bean name="creditJMSTransport" className="org.bss.esb.transport.jms.JmsHandler">
+         <Property name="ConnectionFactory" type="java.lang.String">
+            <Value>qcf-1</Value>
+         </Property>
+         <Property name="Destination" type="java.lang.String">
+            <Value>myCreditQueue</Value>
+         </Property>
+      </Bean>
+      <Bean name="taxCalcWS" className="org.bss.esb.transport.webservice.WebServiceHandler">
+         <Property name="WsdlUrl" type="java.lang.String">
+            <Value>http://www.tax.com/calc</Value>
+         </Property>
+      </Bean>
+      <!-- Transformer beans for the service components -->
+      <Bean name="creditServiceTransform" className="org.bss.esb.transform.XSLTransform">
+         <Property name="XslUrl" type="java.lang.String">
+            <Value>file:///C:/temp/esb/transform/xsl/credit.xsl</Value>
+         </Property>
+      </Bean>
+      <Bean name="taxCalcServiceTransform" className="org.bss.esb.transform.CustomTransform">
+         <Property name="ConfigFileUrl" type="java.lang.String">
+            <Value>file:///C:/temp/esb/transform/custom/configManager.properties</Value>
+         </Property>
+      </Bean>
+      <!--  Transport handlers for the system queues -->
+      <Bean name="redeliveryJMSTransport" className="org.bss.esb.transport.jms.JmsHandler">
+         <Property name="ConnectionFactory" type="java.lang.String">
+            <Value>qcf-1</Value>
+         </Property>
+         <Property name="Destination" type="java.lang.String">
+            <Value>Redelivery.Queue</Value>
+         </Property>
+      </Bean>
+      <Bean name="deadLetterJMSTransport" className="org.bss.esb.transport.jms.JmsHandler">
+         <Property name="ConnectionFactory" type="java.lang.String">
+            <Value>qcf-1</Value>
+         </Property>
+         <Property name="Destination" type="java.lang.String">
+            <Value>System.DL.Queue</Value>
+         </Property>
+      </Bean>
+      <Bean name="errorJMSTransport" className="org.bss.esb.transport.jms.JmsHandler">
+         <Property name="ConnectionFactory" type="java.lang.String">
+            <Value>qcf-1</Value>
+         </Property>
+         <Property name="Destination" type="java.lang.String">
+            <Value>System.Error.Queue</Value>
+         </Property>
+      </Bean>
+      <Bean name="redeliveryRequestJMSTransport" className="org.bss.esb.transport.jms.EsbRedeliveryHandler">
+         <Property name="ConnectionFactory" type="java.lang.String">
+            <Value>qcf-1</Value>
+         </Property>
+         <Property name="Destination" type="java.lang.String">
+            <Value>Redelivery.Request.Topic</Value>
+         </Property>
+      </Bean>
+   </Beans>
+   <!-- Defines the retry policies that can be used by various route definitions. -->
+   <RetryPolicies>
+      <RetryPolicy name="100-sec-retry">
+         <MaxRetries>10</MaxRetries>
+         <RetryInterval>100</RetryInterval>
+      </RetryPolicy>
+      <RetryPolicy name="500-sec-retry">
+         <MaxRetries>10</MaxRetries>
+         <RetryInterval>500</RetryInterval>
+      </RetryPolicy>
+   </RetryPolicies>
+</EsbConfiguration>
